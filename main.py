@@ -14,12 +14,26 @@ data['disease growth possibility level'] = data['disease growth possibility leve
 data["ventilation"] = data["ventilation"].map(lambda x: 2 if x == 'high' else 1 if x == 'medium' else 0)
 data["light_intensity"] = data["light_intensity"].map(lambda x: 2 if x == 'high' else 1 if x == 'medium' else 0)
 data = data.drop(["date", "time"], axis=1)
-data = data.dropna()
+
+for x in data.columns:
+    if x != 'disease growth possibility level' or "ph":
+        data[x] = data[x].fillna(data[x].mode())
+
+data.ph = data.ph.fillna(data.ph.mean())
 
 print(data.head())
 
+print(data.describe())
+
 x = data.drop("disease growth possibility level", axis=1)
 y = data["disease growth possibility level"]
+
+# Data visualization
+
+sns.barplot(x='ph',y='disease growth possibility level',data=data, palette="crest")
+plt.xticks(rotation=90)
+sns.relplot(x="temperature", y="disease growth possibility level", data=data)
+plt.show()
 
 # predictions
 
